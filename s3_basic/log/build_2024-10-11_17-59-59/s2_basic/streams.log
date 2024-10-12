@@ -1,0 +1,28 @@
+[0.027s] Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/s3_basic/build/s2_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/aa274/autonomy_ws/src/AA174aSection/s3_basic -DCMAKE_INSTALL_PREFIX=/home/aa274/autonomy_ws/src/AA174aSection/s3_basic/install/s2_basic
+[0.156s] -- The C compiler identification is GNU 11.4.0
+[0.286s] -- The CXX compiler identification is GNU 11.4.0
+[0.304s] -- Detecting C compiler ABI info
+[0.454s] -- Detecting C compiler ABI info - done
+[0.470s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.470s] -- Detecting C compile features
+[0.471s] -- Detecting C compile features - done
+[0.478s] -- Detecting CXX compiler ABI info
+[0.725s] -- Detecting CXX compiler ABI info - done
+[0.753s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.753s] -- Detecting CXX compile features
+[0.754s] -- Detecting CXX compile features - done
+[0.762s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.212s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.499s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.741s] [31mCMake Error at /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:53 (message):
+[1.741s]   ament_package_xml() package name 's2_basic' in '/package.xml' does not
+[1.741s]   match current PROJECT_NAME 's3_basic'.  You must call project() with the
+[1.741s]   same package name before.
+[1.742s] Call Stack (most recent call first):
+[1.742s]   /opt/ros/humble/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[1.742s]   CMakeLists.txt:30 (ament_lint_auto_find_test_dependencies)
+[1.742s] 
+[1.742s] [0m
+[1.742s] -- Configuring incomplete, errors occurred!
+[1.742s] See also "/home/aa274/autonomy_ws/src/AA174aSection/s3_basic/build/s2_basic/CMakeFiles/CMakeOutput.log".
+[1.748s] Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/s3_basic/build/s2_basic' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/aa274/autonomy_ws/src/AA174aSection/s3_basic -DCMAKE_INSTALL_PREFIX=/home/aa274/autonomy_ws/src/AA174aSection/s3_basic/install/s2_basic
