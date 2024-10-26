@@ -18,17 +18,13 @@ from asl_tb3_lib.tf_utils import quaternion_to_yaw
 V_PREV_THRES = 0.0001
 
 class Navigator(BaseNavigator):
-    def __init__(self, kpx: float, kpy: float, kdx: float, kdy: float,
-                 V_max: float = 0.5, om_max: float = 1) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        self.kpx = kpx
-        self.kpy = kpy
-        self.kdx = kdx
-        self.kdy = kdy
-
-        self.V_max = V_max
-        self.om_max = om_max
+        self.kpx = 2
+        self.kpy = 2
+        self.kdx = 2
+        self.kdy = 2
 
     def compute_heading_control(self, state: TurtleBotState, goal: TurtleBotState) -> TurtleBotControl:
         heading_error = goal.theta - state.theta
@@ -49,62 +45,83 @@ class Navigator(BaseNavigator):
         Outputs:
             V, om: Control actions
         """
-
         dt = t - self.t_prev
-        x_d = scipy.interpolate.splev(dt, plan.path_x_spline)
-        y_d = scipy.interpolate.splev(dt, plan.path_y_spline)
-        xd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 1)
-        yd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 1)
-        xdd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 2)
-        ydd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 2)
 
-        V = xd_d * np.cos(state.theta) + yd_d * np.sin(state.theta)
-        om = ydd_d - self.kdx * xd_d * np.sin(state.theta) + self.kdy * yd_d * np.cos(state.theta)
+        x_d = float(scipy.interpolate.splev(t, plan.path_x_spline, der=0))
+        xd_d = float(scipy.interpolate.splev(t, plan.path_x_spline, der=1))
+        xdd_d = float(scipy.interpolate.splev(t, plan.path_x_spline, der=2))
+        y_d = float(scipy.interpolate.splev(t, plan.path_y_spline, der=0))
+        yd_d = float(scipy.interpolate.splev(t, plan.path_y_spline, der=1))
+        ydd_d = float(scipy.interpolate.splev(t, plan.path_y_spline, der=2))
 
+        x_error = x_d - state.x # positional error
+        y_error = y_d - state.y
 
-        # save the commands that were applied and the time
+        v = self.V_prev
+        if abs(v) < V_PREV_THRES:
+            v = V_PREV_THRES
+            
+        xd = v * np.cos(state.theta) # delta x
+        yd = v * np.sin(state.theta)
+        
+        xd_error = xd_d - xd # velocity error
+        yd_error = yd_d - yd
+
+        u1 = xdd_d + self.kpx * x_error + self.kdx * xd_error # controls
+        u2 = ydd_d + self.kpy * y_error + self.kdy * yd_error
+
+        a = np.cos(state.theta) * u1 + np.sin(state.theta) * u2 # acceleration
+
+        V = self.V_prev + a * dt # new velocity
+
+        omega = (-np.sin(state.theta) / v) * u1 + (np.cos(state.theta) / v) * u2 
+
         self.t_prev = t
-        self.V_prev = V
-        self.om_prev = om
+        self.V_prev = V 
+        self.om_prev = omega
 
-        return V, om
+        return TurtleBotControl(v=V, omega=omega)
     
-    def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float) -> TrajectoryPlan | None:
-        # constants arbitrarily defined
-        width = 10
-        height = 10
-        spline_alpha = 0.3
-        v_desired = 5
+    def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float) -> TrajectoryPlan | None:        
+        """
+        Computes a trajectory plan given a state, goal, occupancy grid, resolution, and time horizon.
+        Returns a TrajectoryPlan object or None if the problem is not solvable or if the path is too short.
+        The plan is computed using the AStar algorithm and splines are used to smooth the path.
+        If the duration of the plan exceeds the time horizon, the plan is scaled to fit the horizon.
+        """
+        
+        statespace_lo = occupancy.origin_xy # origin
+        statespace_hi = occupancy.origin_xy + occupancy.size_xy * occupancy.resolution # max size
 
-        astar = AStar((0, 0), (width, height), state.x, goal.x, occupancy, resolution)
-        if astar.solve():
-            self.path = astar.reconstruct_path()
-        else:
+        x_init = (state.x, state.y) # define problem
+        x_goal = (goal.x, goal.y)
+
+        astar = AStar(statespace_lo, statespace_hi, x_init, x_goal, occupancy, resolution, logger=self.get_logger())
+
+        solvable = astar.solve() # solve path
+        self.get_logger().info("solved?")
+        self.get_logger().info(solvable)
+        if not solvable or len(astar.path) < 4:
             return None
-        # else:
-        #     plt.rcParams['figure.figsize'] = [10, 10]
-        #     astar.plot_path()
-        #     astar.plot_tree(point_size=2)
-        
-        dt = np.zeros(self.path.shape[0])
-        dt[1:] = np.linalg.norm(self.path[1:] - self.path[:-1], axis=1) / v_desired
-        ts = np.cumsum(dt)
-        
-        path_x_spline = scipy.interpolate.splrep(ts, self.path[:,0], k=3, s=spline_alpha)
-        path_y_spline = scipy.interpolate.splrep(ts, self.path[:,1], k=3, s=spline_alpha)
 
-        return TrajectoryPlan(
-            path=self.path,
-            path_x_spline=path_x_spline,
-            path_y_spline=path_y_spline,
-            duration=ts[-1],
-        )
+        path = astar.path
+
+        self.V_prev = 0.0
+        self.om_prev = 0.0
+        self.t_prev = 0.0
+
+        trajectory_plan = self.compute_smooth_plan(path, v_desired=0.1, spline_alpha=0.30)
+
+        return trajectory_plan
+        
+        
 
 
 class AStar(object):
     """Represents a motion planning problem to be solved using A*"""
 
-    def __init__(self, statespace_lo, statespace_hi, x_init, x_goal, occupancy, resolution=1):
+    def __init__(self, statespace_lo, statespace_hi, x_init, x_goal, occupancy, resolution=1, logger=None):
+        self.logger = logger
         self.statespace_lo = statespace_lo         # state space lower bound (e.g., [-5, -5])
         self.statespace_hi = statespace_hi         # state space upper bound (e.g., [5, 5])
         self.occupancy = occupancy                 # occupancy grid (a DetOccupancyGrid2D object)
@@ -137,14 +154,12 @@ class AStar(object):
         Hint: self.occupancy is a DetOccupancyGrid2D object, take a look at its methods for what might be
               useful here
         """
-        ########## Code starts here ##########
         # Check if x is inside the state space bounds
         if not (self.statespace_lo[0] <= x[0] <= self.statespace_hi[0] and 
                 self.statespace_lo[1] <= x[1] <= self.statespace_hi[1]):
             return False
         # Check if x is inside an obstacle
         return self.occupancy.is_free(x)
-        ########## Code ends here ##########
 
     def distance(self, x1, x2):
         """
@@ -157,9 +172,7 @@ class AStar(object):
 
         HINT: This should take one line. Tuples can be converted to numpy arrays using np.array().
         """
-        ########## Code starts here ##########
         return np.linalg.norm(np.array(x1) - np.array(x2))
-        ########## Code ends here ##########
 
     def snap_to_grid(self, x):
         """ Returns the closest point on a discrete state grid
@@ -173,7 +186,10 @@ class AStar(object):
             self.resolution * round((x[1] - self.x_offset[1]) / self.resolution) + self.x_offset[1],
         )
 
-    def get_neighbors(self, x):
+    def get_neighbors(self, x):        
+        if self.logger:
+            self.logger.info(str(x))
+            self.logger.info("state free check")
         """
         Gets the FREE neighbor states of a given state x. Assumes a motion model
         where we can move up, down, left, right, or along the diagonals by an
