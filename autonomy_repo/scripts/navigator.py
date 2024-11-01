@@ -51,18 +51,62 @@ class Navigator(BaseNavigator):
         """
 
         dt = t - self.t_prev
-        x_d = scipy.interpolate.splev(dt, plan.path_x_spline)
-        y_d = scipy.interpolate.splev(dt, plan.path_y_spline)
-        xd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 1)
-        yd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 1)
-        xdd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 2)
-        ydd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 2)
+        x_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 0))
+        y_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 0))
+        xd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 1))
+        yd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 1))
+        xdd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 2))
+        ydd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 2))
 
-        V = xd_d * np.cos(state.theta) + yd_d * np.sin(state.theta)
-        om = ydd_d - self.kdx * xd_d * np.sin(state.theta) + self.kdy * yd_d * np.cos(state.theta)
+        # REFERENCE 2
+        # # Compute control errors
+        # error_x = x_d - state.x
+        # error_y = y_d - state.y
 
+        # # Compute desired heading angle to reach the goal
+        # desired_theta = math.atan2(error_y, error_x)
+
+        # ompute heading error
+        # heading_error = desired_theta - state.theta
+        # heading_error = (heading_error + math.pi) % (2 * math.pi) - math.pi  # Normalize to [-pi, pi]
+
+        # # Compute feedforward linear and angular velocities
+        # v_ff = math.sqrt(xd_d**2 + yd_d**2)
+        # omega_ff = (ydd_d * xd_d - xdd_d * yd_d) / (xd_d**2 + yd_d**2) if (xd_d**2 + yd_d**2) != 0 else 0.0
+
+        # # Proportional control for velocity
+        # k_v = 1.0  # Gain for linear velocity, tune as needed
+        # k_omega = 1.0  # Gain for angular velocity, tune as needed
+
+        # # Compute final control velocities
+        # v = v_ff + k_v * math.sqrt(error_x**2 + error_y**2)
+        # omega = omega_ff + k_omega * heading_error
+
+        # # Create and return a control message
+        # control_command = TurtleBotControl(v=v, omega=omega)
+
+        # REFERENCE 1
+        u1 = xdd_d + self.kpx*(x_d - x) + self.kdx*(xd_d - self.V_prev*np.cos(th))
+        u2 = ydd_d + self.kpy*(y_d - y) + self.kdy*(yd_d - self.V_prev*np.sin(th))
+        
+        vdot = u1*np.cos(th) + u2*np.sin(th)
+        V = self.V_prev + vdot * dt # np.sqrt(u1**2 + u2**2)
+
+        if V < V_PREV_THRES:
+            V = self.V_prev 
+
+
+        if V > V_PREV_THRES:
+            om = (u2*np.cos(th) - u1*np.sin(th)) / V
+        else:
+            om = 0
+
+        # Nolan Code
+        # V = xd_d * np.cos(state.theta) + yd_d * np.sin(state.theta)
+        # om = ydd_d - self.kdx * xd_d * np.sin(state.theta) + self.kdy * yd_d * np.cos(state.theta)
 
         # save the commands that were applied and the time
+
         self.t_prev = t
         self.V_prev = V
         self.om_prev = om
@@ -74,24 +118,51 @@ class Navigator(BaseNavigator):
         width = 10
         height = 10
         spline_alpha = 0.3
-        v_desired = 5
+        # v_desired = 5
+        lower_bounds = (0,0)
+        higher_bounds = (width, height)
 
-        astar = AStar((0, 0), (width, height), state.x, goal.x, occupancy, resolution)
-        if astar.solve():
-            self.path = astar.reconstruct_path()
-        else:
+        # Reference 1
+        # Step 1: Initialize and solve A* problem
+        astar = AStar(lower_bounds, higher_bounds, state.x, goal.x, occupancy, resolution)
+        if not astar.solve() or len(astar.path) < 4:
             return None
+
+        # Step 2: Reset class variables for previous velocity and integration
+        self.previous_velocity = 0.0  # Example reset
+        self.previous_time = 0.0
+
+        # Step 3: Compute timestamps for the path waypoints
+        path = np.array(astar.path)
+        distances = np.linalg.norm(np.diff(path, axis=0), axis=1)
+        cumulative_distances = np.hstack(([0], np.cumsum(distances)))
+        time_stamps = cumulative_distances / horizon  # Assume uniform velocity
+
+        # Step 4: Generate cubic splines for x and y coordinates
+        x_coords = path[:, 0]
+        y_coords = path[:, 1]
+        x_spline = splrep(time_stamps, x_coords, s=spline_alpha )  # Adjust smoothing factor as needed
+        y_spline = splrep(time_stamps, y_coords, s=spline_alpha )
+
+
+        # Nolan Code
+        # astar = AStar((0, 0), (width, height), state.x, goal.x, occupancy, resolution)
+        # if astar.solve():
+        #     self.path = astar.reconstruct_path()
         # else:
-        #     plt.rcParams['figure.figsize'] = [10, 10]
-        #     astar.plot_path()
-        #     astar.plot_tree(point_size=2)
+        #     return None
+        # # else:
+        # #     plt.rcParams['figure.figsize'] = [10, 10]
+        # #     astar.plot_path()
+        # #     astar.plot_tree(point_size=2)
+
         
-        dt = np.zeros(self.path.shape[0])
-        dt[1:] = np.linalg.norm(self.path[1:] - self.path[:-1], axis=1) / v_desired
-        ts = np.cumsum(dt)
+        # dt = np.zeros(self.path.shape[0])
+        # dt[1:] = np.linalg.norm(self.path[1:] - self.path[:-1], axis=1) / v_desired
+        # ts = np.cumsum(dt)
         
-        path_x_spline = scipy.interpolate.splrep(ts, self.path[:,0], k=3, s=spline_alpha)
-        path_y_spline = scipy.interpolate.splrep(ts, self.path[:,1], k=3, s=spline_alpha)
+        # path_x_spline = scipy.interpolate.splrep(ts, self.path[:,0], k=3, s=spline_alpha)
+        # path_y_spline = scipy.interpolate.splrep(ts, self.path[:,1], k=3, s=spline_alpha)
 
         return TrajectoryPlan(
             path=self.path,
@@ -205,6 +276,13 @@ class AStar(object):
                 neighbors.append(neighbor)
         return neighbors
 
+        # check_neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        # for check in check_neighbors:
+        #     neighbor = (x[0] + check[0]*self.resolution, x[1] + check[1]*self.resolution)
+        #     neighbor = self.snap_to_grid(neighbor)
+        #     if self.is_free(neighbor):
+        #         neighbors.append(neighbor)
+
     def find_best_est_cost_through(self):
         """
         Gets the state in open_set that has the lowest est_cost_through
@@ -291,7 +369,34 @@ class AStar(object):
                 self.cost_to_arrive[neighbor] = tentative_cost
                 self.est_cost_through[neighbor] = tentative_cost + self.distance(neighbor, self.x_goal)
 
-        return False    
+        return False 
+
+        # while len(self.open_set) > 0:
+        #     current_state = self.find_best_est_cost_through()
+            
+        #     self.open_set.remove(current_state)
+        #     self.closed_set.add(current_state)
+            
+        #     if current_state == self.x_goal:
+        #         self.path = self.reconstruct_path()
+        #         return True
+
+        #     for neighbor in self.get_neighbors(current_state):
+        #         if neighbor in self.closed_set:
+        #             continue
+                
+        #         current_cost = self.cost_to_arrive[current_state] + self.distance(current_state, neighbor)
+                
+        #         if neighbor not in self.open_set:
+        #             self.open_set.add(neighbor)
+        #         elif current_cost >= self.cost_to_arrive[neighbor]:
+        #             continue
+                
+        #         self.came_from[neighbor] = current_state
+        #         self.cost_to_arrive[neighbor] = current_cost
+        #         self.est_cost_through[neighbor] = current_cost + self.distance(neighbor, self.x_goal)
+        
+        # return False   
 
 class DetOccupancyGrid2D(object):
     """
