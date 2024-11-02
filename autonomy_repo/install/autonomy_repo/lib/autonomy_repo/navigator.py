@@ -1,1 +1,0 @@
-/home/aa274/autonomy_ws/src/AA174aSection/autonomy_repo/scripts/navigator.py

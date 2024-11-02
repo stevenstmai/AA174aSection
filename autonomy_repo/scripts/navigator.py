@@ -26,15 +26,15 @@ class Navigator(BaseNavigator):
         self.kpy = kpy
         self.kdx = kdx
         self.kdy = kdy
-
-        self.V_max = V_max
-        self.om_max = om_max
-
+        self.kp = 2.0 
+        self.t_prev = 0
+        self.V_prev = 0
+        
     def compute_heading_control(self, state: TurtleBotState, goal: TurtleBotState) -> TurtleBotControl:
         heading_error = goal.theta - state.theta
         heading_error = wrap_angle(heading_error)
 
-        control = self.get_parameter("kp").value * heading_error
+        control = self.kp * heading_error
 
         msg = TurtleBotControl()
         msg.omega = control
@@ -51,32 +51,43 @@ class Navigator(BaseNavigator):
         """
 
         dt = t - self.t_prev
-        x_d = scipy.interpolate.splev(dt, plan.path_x_spline)
-        y_d = scipy.interpolate.splev(dt, plan.path_y_spline)
-        xd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 1)
-        yd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 1)
-        xdd_d = scipy.interpolate.splev(dt, plan.path_x_spline, der = 2)
-        ydd_d = scipy.interpolate.splev(dt, plan.path_y_spline, der = 2)
-
-        V = xd_d * np.cos(state.theta) + yd_d * np.sin(state.theta)
-        om = ydd_d - self.kdx * xd_d * np.sin(state.theta) + self.kdy * yd_d * np.cos(state.theta)
-
+        x_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 0))
+        y_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 0))
+        xd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 1))
+        yd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 1))
+        xdd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 2))
+        ydd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 2))
+        
+        
+        u1 = xdd_d + self.kpx*(x_d - state.x) + self.kdx*(xd_d - self.V_prev*np.cos(state.theta))
+        u2 = ydd_d + self.kpx*(y_d - state.y) + self.kdx*(yd_d - self.V_prev*np.sin(state.theta))
+        vdot = u1*np.cos(state.theta) + u2*np.sin(state.theta)
+        V = self.V_prev + vdot * dt
+        
+        if V < V_PREV_THRES:
+            V = self.V_prev
+            
+        if V > V_PREV_THRES:
+            om = (u2*np.cos(state.theta) - u1*np.sin(state.theta)) / V
+        else:
+            om = 0
 
         # save the commands that were applied and the time
         self.t_prev = t
         self.V_prev = V
         self.om_prev = om
 
-        return V, om
+        return TurtleBotControl(
+            v = float(V),
+            omega = om
+        )
     
     def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float) -> TrajectoryPlan | None:
         # constants arbitrarily defined
-        width = 10
-        height = 10
         spline_alpha = 0.3
         v_desired = 5
-
-        astar = AStar((0, 0), (width, height), state.x, goal.x, occupancy, resolution)
+        self.get_logger().info("replanning! ----------")
+        astar = AStar((state.x - horizon, state.y - horizon), (state.x + horizon, state.y + horizon) , (state.x, state.y), (goal.x, goal.y), occupancy, resolution)
         if astar.solve():
             self.path = astar.reconstruct_path()
         else:
@@ -85,7 +96,7 @@ class Navigator(BaseNavigator):
         #     plt.rcParams['figure.figsize'] = [10, 10]
         #     astar.plot_path()
         #     astar.plot_tree(point_size=2)
-        
+        self.path = np.array(self.path)
         dt = np.zeros(self.path.shape[0])
         dt[1:] = np.linalg.norm(self.path[1:] - self.path[:-1], axis=1) / v_desired
         ts = np.cumsum(dt)
@@ -143,7 +154,7 @@ class AStar(object):
                 self.statespace_lo[1] <= x[1] <= self.statespace_hi[1]):
             return False
         # Check if x is inside an obstacle
-        return self.occupancy.is_free(x)
+        return self.occupancy.is_free(np.array(x))
         ########## Code ends here ##########
 
     def distance(self, x1, x2):
@@ -198,9 +209,9 @@ class AStar(object):
                       (self.resolution, self.resolution), (-self.resolution, self.resolution), 
                       (self.resolution, -self.resolution), (-self.resolution, -self.resolution)]
         for direction in directions:
-            neighbor = (x[0] + direction[0], x[1] + direction[1])
+            neighbor = (x[0] + direction[0], float(x[1] + direction[1])) # state tuple
             # Snap the neighbor to grid and check if it's free
-            neighbor = self.snap_to_grid(neighbor)
+            neighbor = self.snap_to_grid(neighbor) # state tuple
             if self.is_free(neighbor):
                 neighbors.append(neighbor)
         return neighbors
@@ -267,7 +278,7 @@ class AStar(object):
         """
         
         while self.open_set:
-            current = self.find_best_est_cost_through()
+            current = self.find_best_est_cost_through() # State tuple
 
             if current == self.x_goal:
                 self.path = self.reconstruct_path()
@@ -276,7 +287,7 @@ class AStar(object):
             self.open_set.remove(current)
             self.closed_set.add(current)
 
-            for neighbor in self.get_neighbors(current):
+            for neighbor in self.get_neighbors(current): # state tuple
                 if neighbor in self.closed_set:
                     continue
 
@@ -328,9 +339,7 @@ class DetOccupancyGrid2D(object):
 
 if __name__ == "__main__":    
     rclpy.init()
-    nav = Navigator()
+    nav = Navigator(1, 1, 1, 1,)
     rclpy.spin(nav)
-
-    
-
+        
     rclpy.shutdown()

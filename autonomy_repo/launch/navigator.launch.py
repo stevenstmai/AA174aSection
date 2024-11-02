@@ -33,7 +33,7 @@ def generate_launch_description():
                 executable="rviz_goal_relay.py",
                 package="asl_tb3_lib",
                 parameters=[
-                    {"output_channel": "/cmd_pose"},
+                    {"output_channel": "/cmd_nav"},
                 ],
             ),
             # state publisher for turtlebot
