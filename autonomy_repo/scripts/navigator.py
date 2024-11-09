@@ -29,6 +29,7 @@ class Navigator(BaseNavigator):
         self.kp = 2.0 
         self.t_prev = 0
         self.V_prev = 0
+        self.om_prev = 0
         
     def compute_heading_control(self, state: TurtleBotState, goal: TurtleBotState) -> TurtleBotControl:
         heading_error = goal.theta - state.theta
@@ -36,9 +37,10 @@ class Navigator(BaseNavigator):
 
         control = self.kp * heading_error
 
-        msg = TurtleBotControl()
-        msg.omega = control
-        return msg
+        return TurtleBotControl(
+            v = 0.0,
+            omega = float(control)
+        )
     
     def compute_trajectory_tracking_control(self, state: TurtleBotState, plan: TrajectoryPlan, t: float) -> TurtleBotControl:
         """
@@ -58,57 +60,63 @@ class Navigator(BaseNavigator):
         xdd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 2))
         ydd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 2))
         
+        state_xd = self.V_prev*np.cos(state.theta)
+        state_yd = self.V_prev*np.sin(state.theta)
         
-        u1 = xdd_d + self.kpx*(x_d - state.x) + self.kdx*(xd_d - self.V_prev*np.cos(state.theta))
-        u2 = ydd_d + self.kpx*(y_d - state.y) + self.kdx*(yd_d - self.V_prev*np.sin(state.theta))
+        u1 = xdd_d + self.kpx*(x_d - state.x) + self.kdx*(xd_d - state_xd)
+        u2 = ydd_d + self.kpy*(y_d - state.y) + self.kdy*(yd_d - state_yd)
+        
         vdot = u1*np.cos(state.theta) + u2*np.sin(state.theta)
-        V = self.V_prev + vdot * dt
+        new_V = self.V_prev + vdot * dt
         
-        if V < V_PREV_THRES:
-            V = self.V_prev
+        if new_V < V_PREV_THRES:
+            new_V = self.V_prev
+            om = 0.0
             
-        if V > V_PREV_THRES:
-            om = (u2*np.cos(state.theta) - u1*np.sin(state.theta)) / V
-        else:
-            om = 0
-
+        new_om = (u2*np.cos(state.theta) - u1*np.sin(state.theta)) / new_V
+            
         # save the commands that were applied and the time
         self.t_prev = t
-        self.V_prev = V
-        self.om_prev = om
+        self.V_prev = new_V
+        self.om_prev = new_om
 
         return TurtleBotControl(
-            v = float(V),
-            omega = om
+            v = float(new_V),
+            omega = float(new_om)
         )
     
     def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float) -> TrajectoryPlan | None:
         # constants arbitrarily defined
-        spline_alpha = 0.3
-        v_desired = 5
-        self.get_logger().info("replanning! ----------")
-        astar = AStar((state.x - horizon, state.y - horizon), (state.x + horizon, state.y + horizon) , (state.x, state.y), (goal.x, goal.y), occupancy, resolution)
-        if astar.solve():
-            self.path = astar.reconstruct_path()
-        else:
-            return None
-        # else:
-        #     plt.rcParams['figure.figsize'] = [10, 10]
-        #     astar.plot_path()
-        #     astar.plot_tree(point_size=2)
-        self.path = np.array(self.path)
-        dt = np.zeros(self.path.shape[0])
-        dt[1:] = np.linalg.norm(self.path[1:] - self.path[:-1], axis=1) / v_desired
-        ts = np.cumsum(dt)
+        spline_alpha = 0.05
+        v_desired = 0.15
         
-        path_x_spline = scipy.interpolate.splrep(ts, self.path[:,0], k=3, s=spline_alpha)
-        path_y_spline = scipy.interpolate.splrep(ts, self.path[:,1], k=3, s=spline_alpha)
+        astar = AStar((state.x - horizon, state.y - horizon), (state.x + horizon, state.y + horizon) , (state.x, state.y), (goal.x, goal.y), occupancy, resolution)
+        if not astar.solve() or len(astar.path) < 4:
+            self.get_logger().info("AAAAAAAAAAAAAAAAAAAAAAA")
+            return None
+
+        # Step 2: Reset class variables for previous velocity and integration
+        self.t_prev = 0.0
+        self.V_prev = 0.0
+        self.om_prev = 0.0
+
+        # Step 3: Compute timestamps for the path waypoints
+        self.path = np.array(astar.path)
+        distances = np.linalg.norm(np.diff(self.path, axis=0), axis=1)
+        cumulative_distances = np.hstack(([0], np.cumsum(distances)))
+        time_stamps = cumulative_distances / v_desired  # Assume uniform velocity
+
+        # Step 4: Generate cubic splines for x and y coordinates
+        x_coords = self.path[:, 0]
+        y_coords = self.path[:, 1]
+        x_spline = scipy.interpolate.splrep(time_stamps, x_coords, s=spline_alpha)  # Adjust smoothing factor as needed
+        y_spline = scipy.interpolate.splrep(time_stamps, y_coords, s=spline_alpha)
 
         return TrajectoryPlan(
             path=self.path,
-            path_x_spline=path_x_spline,
-            path_y_spline=path_y_spline,
-            duration=ts[-1],
+            path_x_spline= x_spline,
+            path_y_spline= y_spline,
+            duration= time_stamps[-1],
         )
 
 
@@ -339,6 +347,7 @@ class DetOccupancyGrid2D(object):
 
 if __name__ == "__main__":    
     rclpy.init()
+    
     nav = Navigator(1, 1, 1, 1,)
     rclpy.spin(nav)
         

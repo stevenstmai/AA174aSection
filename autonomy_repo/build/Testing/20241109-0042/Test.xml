@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20241109-0042-Experimental"
+	Name="aa274-tumeric"
+	Generator="ctest-3.22.1"
+	CompilerName="/usr/bin/g++"
+	CompilerVersion="11.4.0"
+	OSName="Linux"
+	Hostname="aa274-tumeric"
+	OSRelease="6.8.0-48-generic"
+	OSVersion="#48~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct  7 11:24:13 UTC 2"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="142"
+	ProcessorCacheSize="6144"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="16383"
+	TotalPhysicalMemory="7656"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="1899.98"
+	>
+	<Testing>
+		<StartDateTime>Nov 08 16:42 PST</StartDateTime>
+		<StartTestTime>1731112932</StartTestTime>
+		<TestList/>
+		<EndDateTime>Nov 08 16:42 PST</EndDateTime>
+		<EndTestTime>1731112932</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
