@@ -15,7 +15,7 @@ from asl_tb3_lib.navigation import BaseNavigator, TrajectoryPlan
 from asl_tb3_lib.math_utils import wrap_angle
 from asl_tb3_lib.tf_utils import quaternion_to_yaw
 
-V_PREV_THRES = 0.0001
+V_PREV_THRES = 0.001
 
 class Navigator(BaseNavigator):
     def __init__(self, kpx: float, kpy: float, kdx: float, kdy: float,
@@ -60,29 +60,33 @@ class Navigator(BaseNavigator):
         xdd_d = float(scipy.interpolate.splev(dt, plan.path_x_spline, der = 2))
         ydd_d = float(scipy.interpolate.splev(dt, plan.path_y_spline, der = 2))
         
+        if (abs(self.V_prev) < V_PREV_THRES):
+            self.V_prev = V_PREV_THRES
+        
         state_xd = self.V_prev*np.cos(state.theta)
         state_yd = self.V_prev*np.sin(state.theta)
         
+        # Create array of u's
         u1 = xdd_d + self.kpx*(x_d - state.x) + self.kdx*(xd_d - state_xd)
         u2 = ydd_d + self.kpy*(y_d - state.y) + self.kdy*(yd_d - state_yd)
+        u = np.array([u1, u2])
         
-        vdot = u1*np.cos(state.theta) + u2*np.sin(state.theta)
-        new_V = self.V_prev + vdot * dt
+        # J matrix
+        J = np.array([[np.cos(state.theta), -1 * self.V_prev * np.sin(state.theta)], 
+                      [np.sin(state.theta), self.V_prev * np.cos(state.theta)]])
         
-        if new_V < V_PREV_THRES:
-            new_V = self.V_prev
-            om = 0.0
-            
-        new_om = (u2*np.cos(state.theta) - u1*np.sin(state.theta)) / new_V
+        # Invert / solve
+        a, om = np.linalg.solve(J, u)
+        new_V = self.V_prev + a * dt
             
         # save the commands that were applied and the time
         self.t_prev = t
         self.V_prev = new_V
-        self.om_prev = new_om
+        # self.om_prev = om
 
         return TurtleBotControl(
             v = float(new_V),
-            omega = float(new_om)
+            omega = float(om)
         )
     
     def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float) -> TrajectoryPlan | None:
@@ -348,7 +352,7 @@ class DetOccupancyGrid2D(object):
 if __name__ == "__main__":    
     rclpy.init()
     
-    nav = Navigator(1, 1, 1, 1,)
+    nav = Navigator(0.5, 0.5, 1.5, 1.5,)
     rclpy.spin(nav)
         
     rclpy.shutdown()
