@@ -7,17 +7,25 @@ from rclpy.node import Node
 from asl_tb3_lib.navigation import BaseController
 from asl_tb3_msgs.msg import TurtleBotControl
 
+from std_msgs.msg import Bool
+
 class PerceptionController(BaseController):
     def __init__(self):
         super().__init__("perception_controller")
         self.declare_parameter("active", True)
         self.startTime = None
 
+        self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
+
     
     @property
     def active(self):
         return self.get_parameter("active").get_parameter_value().bool_value
     
+    def detect_callback(self, msg: Bool) -> None:
+        if (msg.data == True and self.active == True):
+            self.set_parameters([rclpy.Parameter("active", value=False)])
+
     def compute_control(self):
         control_msg = TurtleBotControl()
         
