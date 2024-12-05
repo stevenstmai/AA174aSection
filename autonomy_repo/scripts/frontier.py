@@ -8,10 +8,9 @@ from asl_tb3_msgs.msg import TurtleBotControl, TurtleBotState
 import rclpy
 
 from asl_tb3_lib.navigation import BaseNavigator, TrajectoryPlan
-from asl_tb3_lib.math_utils import wrap_angle
-from asl_tb3_lib.tf_utils import quaternion_to_yaw
 
-from std_msgs.msg import Bool, OccupancyGrid
+from std_msgs.msg import Bool #, OccupancyGrid
+from nav_msgs.msg import Path, OccupancyGrid
     
 
 class exploration_controller():
@@ -24,13 +23,17 @@ class exploration_controller():
         self.stochOccupancy = None
         self.state = None
 
-        self.map_sub = self.create_subscription(OccupancyGrid, "/map", self.map_callback, 10)  
-        self.state_sub = self.create_subscription(OccupancyGrid, "/state", self.state_callback, 10)  
+        self.map_sub = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
+        self.state_sub = self.create_subscription(TurtleBotState, '/map', self.state_callback, 10)
+        self.nav_success_sub = self.create_subscription(Bool, '/nav_success', self.nav_success_callback, 10)
 
-    # def init_localization(self):
-        # Subscribe and get the occupancy grid from robot   
+        self.goal_pub= self.create_publisher(TurtleBotState, "/explore_goal", 10)
 
-        # Convert to StochOccupancyGrid
+        # Internal state
+        self.occupancy = None
+        self.current_state = None
+        self.navigation_finished  = False
+        # Bool for complete navigation
 
     def map_callback(self, msg: OccupancyGrid) -> None:
         """ Callback triggered when the map is updated
@@ -51,37 +54,37 @@ class exploration_controller():
             self.is_planned = False
             self.replan(self.goal)
 
-    def state_callback(self, msg: TurtleBotState) -> None:
-        """ Callback triggered when the map is updated
+    # Update the robot's current state
+    def state_callback(self, msg: TurtleBotState):
+        self.current_state = np.array([msg.x, msg.y, msg.theta])
 
-        Args:
-            msg (OccupancyGrid): updated map message
-        """
-        self.state = msg
+    # Update navigation status based on success/failure
+    def nav_success_callback(self, msg: Bool):
+        self.navigation_finished = msg.data
+        if self.navigation_finished:
+            self.find_next_goal()
 
-    # Wrapper function for finding our candidate states to explore based on exploration heuristics
-    def find_frontierStates(occupancy: StochOccupancyGrid2D):
-        # Find all the frontier states
-        frontier_states = exploreMap.explore()
+    def find_next_goal(self):
+        if self.occupancy is not None and self.current_state is not None:
+            frontier_states = self.explore(self.occupancy, self.current_state)
 
-    def compute_explorationFrontier():
-        StochOccupancyGrid2D map = init_localization()
+            # Find the closest frontier state to the current position
+            distances = np.linalg.norm(frontier_states - self.current_state, axis=1)
+            closest_frontier = frontier_states[np.argmin(distances)]
 
-        frontier_states = find_frontierStates()
+            #Add heurisitcs with number on large group of unexplored
 
-        # Heuristic 1: Short and Feasible Path
+            # Publish the closest frontier as the next goal
+            goal_msg = TurtleBotState
+            goal_msg.x = closest_frontier[0]
+            goal_msg.y = closest_frontier[1]
+            goal_msg.theta = closest_frontier[2]
+            self.goal_pub.publish(goal_msg)
 
-        # Heuristic 2: A lot of current unexplored states
+            self.navigation_in_progress = True
 
-        # Heurisitc 3 (Extra): Try to find optimal exploration route (Harder)
-
-
-class exploreMap(object):
-    """Represents a motion planning problem to be solved by Frontier Exploration Heurisitcs"""
-    def __init__(self, occupancy):
-        self.occupancy = occupancy 
-
-    def explore(occupancy, current_state):
+    # TurtleBotState vs np.ndarray
+    def explore(occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
         """ returns potential states to explore
         Args:
             occupancy (StochasticOccupancyGrid2D): Represents the known, unknown, occupied, and unoccupied states. See class in first section of notebook.
@@ -97,42 +100,31 @@ class exploreMap(object):
         window_size = 13   # defines the window side-length for neighborhood of cells to consider for heuristics
         ########################### Code starts here ###########################
         occupancy.window_size = window_size
-        # Define convolution kernel for sliding window
         kernel = np.ones((occupancy.window_size, occupancy.window_size))
 
-        # Binary masks for the occupancy map
         occupied_mask = (occupancy.probs >= occupancy.thresh)
         unoccupied_mask = (occupancy.probs < occupancy.thresh) & (occupancy.probs >= 0)
         unknown_mask = occupancy.probs == -1
 
-        # Convolve binary masks to count cells in each category
         occupied_count = convolve2d(occupied_mask, kernel, mode="same", boundary="fill", fillvalue=0)
         unoccupied_count = convolve2d(unoccupied_mask, kernel, mode="same", boundary="fill", fillvalue=0)
         unknown_count = convolve2d(unknown_mask, kernel, mode="same", boundary="fill", fillvalue=0)
 
-        # Heuristic 1: Unknown cells >= 20% of surrounding cells
         total_cells = occupancy.window_size**2
         heuristic1 = (unknown_count / total_cells) >= 0.2
-
-        # Heuristic 2: No occupied cells in the window
         heuristic2 = occupied_count == 0
-
-        # Heuristic 3: Unoccupied cells >= 30% of surrounding cells
         heuristic3 = (unoccupied_count / total_cells) >= 0.3
 
-        # Combine all heuristics
         valid_frontier = heuristic1 & heuristic2 & heuristic3
-
-        # Extract valid frontier states
         frontier_indices = np.argwhere(valid_frontier)
         frontier_states = occupancy.grid2state(frontier_indices)
-        frontier_states = frontier_states[:, [1, 0]] # Adopting the row column indexing to X (horizontal), Y (Vertical) coordinate system
+        # frontier_states = frontier_states[:, [1, 0]] # Adopting the row column indexing to X (horizontal), Y (Vertical) coordinate system
 
         # Compute the distance to the closest frontier state
         # current_state = np.array([6., 5.])
-        distances = np.linalg.norm(frontier_states - current_state, axis=1)
-        closest_distance = np.min(distances)
-        print(closest_distance)
+        # distances = np.linalg.norm(frontier_states - current_state, axis=1)
+        # closest_distance = np.min(distances)
+        # print(closest_distance)
 
         ########################### Code ends here ###########################
         return frontier_states
@@ -142,8 +134,6 @@ class exploreMap(object):
 
 if __name__ == "__main__":    
     rclpy.init()
-    
-    explore = frontierExplore()
-    rclpy.spin(explore)
-        
+    frontier_explore_node = exploration_controller()
+    rclpy.spin(frontier_explore_node)
     rclpy.shutdown()
