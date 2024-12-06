@@ -17,23 +17,28 @@ class exploration_controller():
     def __init__(self, speed: float, exploration: float) -> None:
         super().__init__()
 
-        self.speed = 0
-        self.exploration = 0
-        self.occupancy = None
-        self.stochOccupancy = None
-        self.state = None
-
         self.map_sub = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
         self.state_sub = self.create_subscription(TurtleBotState, '/map', self.state_callback, 10)
         self.nav_success_sub = self.create_subscription(Bool, '/nav_success', self.nav_success_callback, 10)
-
-        self.goal_pub= self.create_publisher(TurtleBotState, "/explore_goal", 10)
+        self.cmd_nav= self.create_publisher(TurtleBotState, "/cmd_nav", 10)
 
         # Internal state
         self.occupancy = None
+        self.current_position = None
         self.current_state = None
         self.navigation_finished  = False
-        # Bool for complete navigation
+
+        self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
+        self.declare_parameter("active", True)
+        self.startTime = None
+
+    @property
+    def active(self):
+        return self.get_parameter("active").get_parameter_value().bool_value
+
+    def detect_callback(self, msg: Bool) -> None:
+        if (msg.data == True and self.active == True):
+            self.set_parameters([rclpy.Parameter("active", value=False)])
 
     def map_callback(self, msg: OccupancyGrid) -> None:
         """ Callback triggered when the map is updated
@@ -56,7 +61,8 @@ class exploration_controller():
 
     # Update the robot's current state
     def state_callback(self, msg: TurtleBotState):
-        self.current_state = np.array([msg.x, msg.y, msg.theta])
+        self.current_position = np.array([msg.x, msg.y])
+        self.current_state = msg
 
     # Update navigation status based on success/failure
     def nav_success_callback(self, msg: Bool):
@@ -66,22 +72,46 @@ class exploration_controller():
 
     def find_next_goal(self):
         if self.occupancy is not None and self.current_state is not None:
-            frontier_states = self.explore(self.occupancy, self.current_state)
+            frontier_states = self.explore(self.occupancy, self.current_position)
 
             # Find the closest frontier state to the current position
-            distances = np.linalg.norm(frontier_states - self.current_state, axis=1)
+            distances = np.linalg.norm(frontier_states - self.current_position, axis=1)
             closest_frontier = frontier_states[np.argmin(distances)]
+
+            closest_distance = closest_frontier - self.current_position
+            unit_vec_goal = closest_distance / np.linalg.norm(closest_distance)
+            angle = np.arctan2(closest_distance.x, closest_distance.y)
 
             #Add heurisitcs with number on large group of unexplored
 
-            # Publish the closest frontier as the next goal
-            goal_msg = TurtleBotState
-            goal_msg.x = closest_frontier[0]
-            goal_msg.y = closest_frontier[1]
-            goal_msg.theta = closest_frontier[2]
-            self.goal_pub.publish(goal_msg)
+            goal_msg = TurtleBotState (
+                    x = closest_frontier[0]
+                    y = closest_frontier[1]
+                    theta = angle
+                )
 
-            self.navigation_in_progress = True
+            if (self.active):
+                self.cmd_nav.publish(goal_msg)
+                self.navigation_finished = False
+
+            if (not self.active): 
+                goal_msg = self.current_state
+                self.cmd_nav.publish(goal_msg)
+                self.navigation_finished = True
+
+                if self.startTime is None:
+                    self.startTime = self.get_clock().now().nanoseconds / 1e9
+                
+                current_time = self.get_clock().now().nanoseconds / 1e9
+            
+                if (current_time - self.startTime > 5):
+                    self.set_parameters([rclpy.Parameter("active", value=True)])
+                    self.startTime = None
+
+                self.cmd_nav.publish(goal_msg)
+                self.navigation_finished = False
+
+                
 
     # TurtleBotState vs np.ndarray
     def explore(occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
