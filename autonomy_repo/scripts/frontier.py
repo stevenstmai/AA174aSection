@@ -26,11 +26,17 @@ class exploration_controller():
         self.occupancy = None
         self.current_position = None
         self.current_state = None
-        self.navigation_finished  = False
+        self.navigation_finished  = True
+        self.goal_state = None
 
         self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
         self.declare_parameter("active", True)
         self.startTime = None
+        self.detect_timer = self.create_timer(0.2, self.decector_timer)
+
+        if self.navigation_finished and self.goal_state is None:
+            self.get_logger().info("Setting initial exploration goal...")
+            self.find_next_goal()  
 
     @property
     def active(self):
@@ -38,7 +44,26 @@ class exploration_controller():
 
     def detect_callback(self, msg: Bool) -> None:
         if (msg.data == True and self.active == True):
-            self.set_parameters([rclpy.Parameter("active", value=False)])
+            self.set_parameters([rclpy.Parameter("active", value=False)])     
+
+    def detector_timer(self):
+        if (self.active):
+            # DO nothing
+            test = 0
+        if (self.active == False):
+            self.get_logger().info("NOT ACTIVE")
+            if self.startTime is None:
+                self.startTime = self.get_clock().now().nanoseconds / 1e9
+                self.cmd_nav.publish(self.current_state)
+                self.navigation_finished = True
+                
+            current_time = self.get_clock().now().nanoseconds / 1e9
+            
+            if (current_time - self.startTime > 5):
+                self.set_parameters([rclpy.Parameter("active", value=True)])
+                self.startTime = None
+                self.cmd_nav.publish(self.goal_state) # Or find new goal
+                self.navigation_finished = False 
 
     def map_callback(self, msg: OccupancyGrid) -> None:
         """ Callback triggered when the map is updated
@@ -47,17 +72,17 @@ class exploration_controller():
             msg (OccupancyGrid): updated map message
         """
         self.occupancy = StochOccupancyGrid2D(
-            resolution=msg.info.resolution,
-            size_xy=np.array([msg.info.width, msg.info.height]),
-            origin_xy=np.array([msg.info.origin.position.x, msg.info.origin.position.y]),
-            window_size=9,
-            probs=msg.data,
+            resolution = msg.info.resolution,
+            size_xy = np.array([msg.info.width, msg.info.height]),
+            origin_xy = np.array([msg.info.origin.position.x, msg.info.origin.position.y]),
+            window_size =9,
+            probs = msg.data,
         )
 
-        # replan if the new map updates causes collision in the original plan
-        if self.is_planned and not all([self.occupancy.is_free(s) for s in self.plan.path[1:]]):
-            self.is_planned = False
-            self.replan(self.goal)
+        # # replan if the new map updates causes collision in the original plan
+        # if self.is_planned and not all([self.occupancy.is_free(s) for s in self.plan.path[1:]]):
+        #     self.is_planned = False
+        #     self.replan(self.goal_state)
 
     # Update the robot's current state
     def state_callback(self, msg: TurtleBotState):
@@ -89,30 +114,11 @@ class exploration_controller():
                     y = closest_frontier[1]
                     theta = angle
                 )
-
-            if (self.active):
-                self.cmd_nav.publish(goal_msg)
-                self.navigation_finished = False
-
-            if (not self.active): 
-                self.get_logger().info("AAAAAAAAAAAAAAAAAAAAAAA")
-                goal_msg = self.current_state
-                self.cmd_nav.publish(goal_msg)
-                self.navigation_finished = True
-
-                if self.startTime is None:
-                    self.startTime = self.get_clock().now().nanoseconds / 1e9
-                
-                current_time = self.get_clock().now().nanoseconds / 1e9
             
-                if (current_time - self.startTime > 5):
-                    self.set_parameters([rclpy.Parameter("active", value=True)])
-                    self.startTime = None
-
-                self.cmd_nav.publish(goal_msg)
-                self.navigation_finished = False
-
-                
+            self.goal_state = goal_msg
+            self.cmd_nav.publish(goal_msg)
+            self.navigation_finished = False     
+              
 
     # TurtleBotState vs np.ndarray
     def explore(occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
