@@ -95,6 +95,7 @@ class exploration_controller():
                 self.navigation_finished = False
 
             if (not self.active): 
+                self.get_logger().info("AAAAAAAAAAAAAAAAAAAAAAA")
                 goal_msg = self.current_state
                 self.cmd_nav.publish(goal_msg)
                 self.navigation_finished = True
