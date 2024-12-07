@@ -33,37 +33,39 @@ class exploration_controller(Node):
         self.goal_state = None
         self.init = True
 
-        # self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
-        # self.declare_parameter("active", True)
-        # self.startTime = None
-        # self.detect_timer = self.create_timer(0.2, self.detector_timer)
+        self.last_index = 0
 
-    # @property
-    # def active(self):
-    #     return self.get_parameter("active").get_parameter_value().bool_value
+        self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
+        self.declare_parameter("active", True)
+        self.startTime = None
+        self.detect_timer = self.create_timer(0.2, self.detector_timer)
 
-    # def detect_callback(self, msg: Bool) -> None:
-    #     if (msg.data == True and self.active == True):
-    #         self.set_parameters([rclpy.Parameter("active", value=False)])     
+    @property
+    def active(self):
+        return self.get_parameter("active").get_parameter_value().bool_value
 
-    # def detector_timer(self):
-    #     if (self.active):
-    #         # DO nothing
-    #         test = 0
-    #     if (self.active == False):
-    #         self.get_logger().info("NOT ACTIVE")
-    #         if self.startTime is None:
-    #             self.startTime = self.get_clock().now().nanoseconds / 1e9
-    #             self.cmd_nav.publish(self.current_state)
-    #             self.navigation_finished = True
+    def detect_callback(self, msg: Bool) -> None:
+        if (msg.data == True and self.active == True):
+            self.set_parameters([rclpy.Parameter("active", value=False)])     
+
+    def detector_timer(self):
+        if (self.active):
+            # DO nothing
+            test = 0
+        if (self.active == False):
+            self.get_logger().info("NOT ACTIVE")
+            if self.startTime is None:
+                self.startTime = self.get_clock().now().nanoseconds / 1e9
+                self.cmd_nav.publish(self.current_state)
+                self.navigation_finished = True
                 
-    #         current_time = self.get_clock().now().nanoseconds / 1e9
+            current_time = self.get_clock().now().nanoseconds / 1e9
             
-    #         if (current_time - self.startTime > 5):
-    #             self.set_parameters([rclpy.Parameter("active", value=True)])
-    #             self.startTime = None
-    #             self.cmd_nav.publish(self.goal_state) # Or find new goal
-    #             self.navigation_finished = False 
+            if (current_time - self.startTime > 5):
+                self.set_parameters([rclpy.Parameter("active", value=True)])
+                self.startTime = None
+                self.cmd_nav.publish(self.goal_state) # Or find new goal
+                self.navigation_finished = False 
 
     def map_callback(self, msg: OccupancyGrid) -> None:
         """ Callback triggered when the map is updated
@@ -111,8 +113,14 @@ class exploration_controller(Node):
                 self.cmd_nav.publish(self.current_state)
 
             # Find the closest frontier state to the current position
-            distances = np.linalg.norm(frontier_states - self.current_position, axis=1)
+            distances = np.linalg.norm(frontier_states - self.current_position, axis=1) 
+
             closest_frontier = frontier_states[np.argmax(distances)]
+
+            # if (closest_frontier[0] == frontier_states[self.last_index][0] and closest_frontier[1] == frontier_states[self.last_index][1]):
+            #     closest_frontier = frontier_states[np.argsort(distances)[len(distances)//2] + 1] 
+
+            # self.last_index = np.argsort(distances)[len(distances)//2]
 
             self.get_logger().info(f"{closest_frontier}")
             self.get_logger().info(f"{self.current_position}")
