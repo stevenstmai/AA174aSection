@@ -46,5 +46,9 @@ def generate_launch_description():
                 executable="frontier.py",
                 package="autonomy_repo",
             ),
+            Node(
+                executable="navigator.py",
+                package="autonomy_repo",
+            ),
         ]
     )

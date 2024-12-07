@@ -1,0 +1,22 @@
+[0.057s] Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic -- -j8 -l8
+[0.165s] Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic -- -j8 -l8
+[0.250s] Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic
+[0.269s] -- Install configuration: "RelWithDebInfo"
+[0.269s] -- Up-to-date: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib/s2_basic/constant_control.py
+[0.270s] -- Execute custom install script
+[0.271s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/ament_index/resource_index/package_run_dependencies/s2_basic
+[0.271s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/ament_index/resource_index/parent_prefix_path/s2_basic
+[0.271s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/environment/ament_prefix_path.sh
+[0.272s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/environment/ament_prefix_path.dsv
+[0.272s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/environment/path.sh
+[0.274s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/environment/path.dsv
+[0.274s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/local_setup.bash
+[0.274s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/local_setup.sh
+[0.275s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/local_setup.zsh
+[0.277s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/local_setup.dsv
+[0.278s] -- Symlinking: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.dsv
+[0.296s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/ament_index/resource_index/packages/s2_basic
+[0.296s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/cmake/s2_basicConfig.cmake
+[0.297s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/cmake/s2_basicConfig-version.cmake
+[0.298s] -- Up-to-date symlink: /home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.xml
+[0.342s] Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic

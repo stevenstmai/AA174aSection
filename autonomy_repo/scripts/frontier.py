@@ -33,42 +33,42 @@ class exploration_controller(Node):
         self.goal_state = None
         self.init = True
 
-        self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
-        self.declare_parameter("active", True)
-        self.startTime = None
-        self.detect_timer = self.create_timer(0.2, self.detector_timer)
+        # self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
+        # self.declare_parameter("active", True)
+        # self.startTime = None
+        # self.detect_timer = self.create_timer(0.2, self.detector_timer)
 
-    @property
-    def active(self):
-        return self.get_parameter("active").get_parameter_value().bool_value
+    # @property
+    # def active(self):
+    #     return self.get_parameter("active").get_parameter_value().bool_value
 
-    def detect_callback(self, msg: Bool) -> None:
-        if (msg.data == True and self.active == True):
-            self.set_parameters([rclpy.Parameter("active", value=False)])     
+    # def detect_callback(self, msg: Bool) -> None:
+    #     if (msg.data == True and self.active == True):
+    #         self.set_parameters([rclpy.Parameter("active", value=False)])     
 
-    def detector_timer(self):
-        if (self.active):
-            # DO nothing
-            test = 0
-        if (self.active == False):
-            self.get_logger().info("NOT ACTIVE")
-            if self.startTime is None:
-                self.startTime = self.get_clock().now().nanoseconds / 1e9
-                self.cmd_nav.publish(self.current_state)
-                self.navigation_finished = True
+    # def detector_timer(self):
+    #     if (self.active):
+    #         # DO nothing
+    #         test = 0
+    #     if (self.active == False):
+    #         self.get_logger().info("NOT ACTIVE")
+    #         if self.startTime is None:
+    #             self.startTime = self.get_clock().now().nanoseconds / 1e9
+    #             self.cmd_nav.publish(self.current_state)
+    #             self.navigation_finished = True
                 
-            current_time = self.get_clock().now().nanoseconds / 1e9
+    #         current_time = self.get_clock().now().nanoseconds / 1e9
             
-            if (current_time - self.startTime > 5):
-                self.set_parameters([rclpy.Parameter("active", value=True)])
-                self.startTime = None
-                self.cmd_nav.publish(self.goal_state) # Or find new goal
-                self.navigation_finished = False 
+    #         if (current_time - self.startTime > 5):
+    #             self.set_parameters([rclpy.Parameter("active", value=True)])
+    #             self.startTime = None
+    #             self.cmd_nav.publish(self.goal_state) # Or find new goal
+    #             self.navigation_finished = False 
 
     def map_callback(self, msg: OccupancyGrid) -> None:
         """ Callback triggered when the map is updated
 
-        Args:
+        Args:   
             msg (OccupancyGrid): updated map message
         """ 
             
@@ -93,29 +93,32 @@ class exploration_controller(Node):
         if (self.init == True):
             if (self.occupancy != None and self.current_state != None):
                     self.get_logger().info("Setting initial exploration goal...")
-                    self.get_logger().info("%f", self.current_position[0])
-                    self.get_logger().info("%f", self.current_position[1])
-                    self.get_logger().info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     self.find_next_goal() 
                     self.init = False
 
     # Update navigation status based on success/failure
     def nav_success_callback(self, msg: Bool):
-        self.navigation_finished = msg.data
-        if self.navigation_finished:
-            self.find_next_goal()
+        # self.navigation_finished = msg.data
+        # if self.navigation_finished:
+        self.find_next_goal()
 
     def find_next_goal(self):
-        if self.occupancy is not None and self.current_state is not None:
+        if (self.occupancy != None and self.current_state != None):
             frontier_states = self.explore(self.occupancy, self.current_position)
+
+            if (frontier_states.size == 0):
+                self.get_logger().info("BBBBBBBBBBBB")
+                self.cmd_nav.publish(self.current_state)
 
             # Find the closest frontier state to the current position
             distances = np.linalg.norm(frontier_states - self.current_position, axis=1)
-            closest_frontier = frontier_states[np.argmin(distances)]
+            closest_frontier = frontier_states[np.argmax(distances)]
+
+            self.get_logger().info(f"{closest_frontier}")
+            self.get_logger().info(f"{self.current_position}")
 
             closest_distance = closest_frontier - self.current_position
-            unit_vec_goal = closest_distance / np.linalg.norm(closest_distance)
-            angle = np.arctan2(closest_distance.x, closest_distance.y)
+            angle = np.arctan2(closest_distance[0], closest_distance[1])
 
             #Add heurisitcs with number on large group of unexplored
 
@@ -125,13 +128,15 @@ class exploration_controller(Node):
                     theta = angle
                 )
             
+            self.get_logger().info(f"{goal_msg}")
+            
             self.goal_state = goal_msg
             self.cmd_nav.publish(goal_msg)
             self.navigation_finished = False     
               
 
     # TurtleBotState vs np.ndarray
-    def explore(occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
+    def explore(self, occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
         """ returns potential states to#!/usr/bin/env python3 explore
         Args:
             occupancy (StochasticOccupancyGrid2D): Represents the known, unknown, occupied, and unoccupied states. See class in first section of notebook.
@@ -166,13 +171,6 @@ class exploration_controller(Node):
         frontier_indices = np.argwhere(valid_frontier)
         frontier_states = occupancy.grid2state(frontier_indices)
         # frontier_states = frontier_states[:, [1, 0]] # Adopting the row column indexing to X (horizontal), Y (Vertical) coordinate system
-
-        # Compute the distance to the closest frontier state
-        # current_state = np.array([6., 5.])
-        # distances = np.linalg.norm(frontier_states - current_state, axis=1)
-        # closest_distance = np.min(distances)
-        # print(closest_distance)
-
         ########################### Code ends here ###########################
         return frontier_states
 

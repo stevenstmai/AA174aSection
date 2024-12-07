@@ -1,0 +1,256 @@
+[0.494s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.495s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo'], cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x73d382e3a500>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x73d382e39e70>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x73d382e39e70>>, mixin_verb=('build',))
+[1.179s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[1.179s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[1.180s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[1.180s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[1.180s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[1.180s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[1.180s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/aa274/autonomy_ws/src/AA174aSection'
+[1.180s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[1.181s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[1.181s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[1.181s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[1.181s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[1.181s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[1.182s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[1.182s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[1.182s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[1.217s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[1.217s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[1.218s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[1.218s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[1.218s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[1.218s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extensions ['ignore', 'ignore_ament_install']
+[1.219s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extension 'ignore'
+[1.219s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extension 'ignore_ament_install'
+[1.220s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extensions ['colcon_pkg']
+[1.220s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extension 'colcon_pkg'
+[1.220s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extensions ['colcon_meta']
+[1.220s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extension 'colcon_meta'
+[1.221s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extensions ['ros']
+[1.221s] Level 1:colcon.colcon_core.package_identification:_identify(autonomy_repo) by extension 'ros'
+[1.227s] DEBUG:colcon.colcon_core.package_identification:Package 'autonomy_repo' with type 'ros.ament_cmake' and name 'autonomy_repo'
+[1.227s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[1.227s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[1.227s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[1.228s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[1.228s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[1.228s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[1.228s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[1.229s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[1.229s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[1.230s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extensions ['ignore', 'ignore_ament_install']
+[1.231s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extension 'ignore'
+[1.231s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extension 'ignore_ament_install'
+[1.231s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extensions ['colcon_pkg']
+[1.232s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extension 'colcon_pkg'
+[1.232s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extensions ['colcon_meta']
+[1.232s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extension 'colcon_meta'
+[1.232s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extensions ['ros']
+[1.232s] Level 1:colcon.colcon_core.package_identification:_identify(s2_basic) by extension 'ros'
+[1.234s] DEBUG:colcon.colcon_core.package_identification:Package 's2_basic' with type 'ros.ament_cmake' and name 's2_basic'
+[1.235s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extensions ['ignore', 'ignore_ament_install']
+[1.235s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extension 'ignore'
+[1.236s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extension 'ignore_ament_install'
+[1.237s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extensions ['colcon_pkg']
+[1.237s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extension 'colcon_pkg'
+[1.238s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extensions ['colcon_meta']
+[1.238s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extension 'colcon_meta'
+[1.239s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extensions ['ros']
+[1.239s] Level 1:colcon.colcon_core.package_identification:_identify(s3_basic) by extension 'ros'
+[1.241s] DEBUG:colcon.colcon_core.package_identification:Package 's3_basic' with type 'ros.ament_cmake' and name 's3_basic'
+[1.241s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[1.241s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[1.241s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[1.241s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[1.241s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[1.348s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[1.349s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[1.356s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /home/aa274/autonomy_ws/install
+[1.358s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 18 installed packages in /home/aa274/tb_ws/install
+[1.362s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 240 installed packages in /opt/ros/humble
+[1.367s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.464s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo']'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_target' from command line to 'None'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_clean_cache' from command line to 'False'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_clean_first' from command line to 'False'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'cmake_force_configure' from command line to 'False'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'ament_cmake_args' from command line to 'None'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'catkin_cmake_args' from command line to 'None'
+[1.465s] Level 5:colcon.colcon_core.verb:set package 'autonomy_repo' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.465s] DEBUG:colcon.colcon_core.verb:Building package 'autonomy_repo' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo', 'merge_install': False, 'path': '/home/aa274/autonomy_ws/src/AA174aSection/autonomy_repo', 'symlink_install': True, 'test_result_base': None}
+[1.468s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo']'
+[1.468s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_target' from command line to 'None'
+[1.469s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.469s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_clean_cache' from command line to 'False'
+[1.469s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_clean_first' from command line to 'False'
+[1.469s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'cmake_force_configure' from command line to 'False'
+[1.470s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'ament_cmake_args' from command line to 'None'
+[1.470s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'catkin_cmake_args' from command line to 'None'
+[1.470s] Level 5:colcon.colcon_core.verb:set package 's2_basic' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.470s] DEBUG:colcon.colcon_core.verb:Building package 's2_basic' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic', 'merge_install': False, 'path': '/home/aa274/autonomy_ws/src/AA174aSection/s2_basic', 'symlink_install': True, 'test_result_base': None}
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo']'
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_target' from command line to 'None'
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_clean_cache' from command line to 'False'
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_clean_first' from command line to 'False'
+[1.472s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'cmake_force_configure' from command line to 'False'
+[1.473s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'ament_cmake_args' from command line to 'None'
+[1.473s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'catkin_cmake_args' from command line to 'None'
+[1.473s] Level 5:colcon.colcon_core.verb:set package 's3_basic' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.473s] DEBUG:colcon.colcon_core.verb:Building package 's3_basic' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=ON', '-DCMAKE_BUILD_TYPE=RelWithDebInfo'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic', 'merge_install': False, 'path': '/home/aa274/autonomy_ws/src/AA174aSection/s3_basic', 'symlink_install': True, 'test_result_base': None}
+[1.473s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.475s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.476s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/aa274/autonomy_ws/src/AA174aSection/autonomy_repo' with build type 'ament_cmake'
+[1.476s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/aa274/autonomy_ws/src/AA174aSection/autonomy_repo'
+[1.481s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.482s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.482s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.494s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/aa274/autonomy_ws/src/AA174aSection/s2_basic' with build type 'ament_cmake'
+[1.494s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/aa274/autonomy_ws/src/AA174aSection/s2_basic'
+[1.496s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.496s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.517s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/aa274/autonomy_ws/src/AA174aSection/s3_basic' with build type 'ament_cmake'
+[1.518s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/aa274/autonomy_ws/src/AA174aSection/s3_basic'
+[1.518s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.518s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.551s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo -- -j8 -l8
+[1.558s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic -- -j8 -l8
+[1.578s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic -- -j8 -l8
+[1.705s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo -- -j8 -l8
+[1.722s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic -- -j8 -l8
+[1.725s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic -- -j8 -l8
+[1.827s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo
+[1.837s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic
+[1.844s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic
+[1.921s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(autonomy_repo)
+[1.924s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/autonomy_repo
+[1.932s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo' for CMake module files
+[1.935s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo' for CMake config files
+[1.938s] Level 1:colcon.colcon_core.shell:create_environment_hook('autonomy_repo', 'cmake_prefix_path')
+[1.939s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.ps1'
+[1.941s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.dsv'
+[1.942s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.sh'
+[1.944s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib'
+[1.945s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/bin'
+[1.945s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib/pkgconfig/autonomy_repo.pc'
+[1.947s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib/python3.10/site-packages'
+[1.949s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/bin'
+[1.953s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.ps1'
+[1.956s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.dsv'
+[1.958s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.sh'
+[1.960s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.bash'
+[1.963s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.zsh'
+[1.966s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/colcon-core/packages/autonomy_repo)
+[1.976s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(s2_basic)
+[1.976s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic' for CMake module files
+[1.978s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic' for CMake config files
+[1.979s] Level 1:colcon.colcon_core.shell:create_environment_hook('s2_basic', 'cmake_prefix_path')
+[1.980s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.ps1'
+[1.981s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s2_basic
+[1.982s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.dsv'
+[1.984s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.sh'
+[1.989s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib'
+[1.990s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/bin'
+[1.991s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib/pkgconfig/s2_basic.pc'
+[1.993s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib/python3.10/site-packages'
+[1.993s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/bin'
+[1.994s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.ps1'
+[1.996s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.dsv'
+[1.997s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.sh'
+[1.999s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.bash'
+[2.000s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.zsh'
+[2.001s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/colcon-core/packages/s2_basic)
+[2.012s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(s3_basic)
+[2.015s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic' for CMake module files
+[2.014s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/aa274/autonomy_ws/src/AA174aSection/build/s3_basic
+[2.017s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic' for CMake config files
+[2.017s] Level 1:colcon.colcon_core.shell:create_environment_hook('s3_basic', 'cmake_prefix_path')
+[2.018s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.ps1'
+[2.019s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.dsv'
+[2.021s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.sh'
+[2.022s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib'
+[2.023s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/bin'
+[2.023s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib/pkgconfig/s3_basic.pc'
+[2.024s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib/python3.10/site-packages'
+[2.024s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/bin'
+[2.034s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.ps1'
+[2.038s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.dsv'
+[2.039s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.sh'
+[2.041s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.bash'
+[2.044s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.zsh'
+[2.045s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/colcon-core/packages/s3_basic)
+[2.068s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(autonomy_repo)
+[2.069s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo' for CMake module files
+[2.071s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo' for CMake config files
+[2.071s] Level 1:colcon.colcon_core.shell:create_environment_hook('autonomy_repo', 'cmake_prefix_path')
+[2.073s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.ps1'
+[2.074s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.dsv'
+[2.075s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/hook/cmake_prefix_path.sh'
+[2.080s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib'
+[2.081s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/bin'
+[2.081s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib/pkgconfig/autonomy_repo.pc'
+[2.083s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/lib/python3.10/site-packages'
+[2.085s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/bin'
+[2.087s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.ps1'
+[2.091s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.dsv'
+[2.093s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.sh'
+[2.095s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.bash'
+[2.098s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/autonomy_repo/package.zsh'
+[2.105s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/autonomy_repo/share/colcon-core/packages/autonomy_repo)
+[2.110s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(s2_basic)
+[2.111s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic' for CMake module files
+[2.113s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic' for CMake config files
+[2.113s] Level 1:colcon.colcon_core.shell:create_environment_hook('s2_basic', 'cmake_prefix_path')
+[2.115s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.ps1'
+[2.120s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.dsv'
+[2.124s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/hook/cmake_prefix_path.sh'
+[2.126s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib'
+[2.128s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/bin'
+[2.128s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib/pkgconfig/s2_basic.pc'
+[2.129s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/lib/python3.10/site-packages'
+[2.130s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/bin'
+[2.131s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.ps1'
+[2.133s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.dsv'
+[2.135s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.sh'
+[2.136s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.bash'
+[2.137s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/s2_basic/package.zsh'
+[2.139s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/s2_basic/share/colcon-core/packages/s2_basic)
+[2.144s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(s3_basic)
+[2.147s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic' for CMake module files
+[2.151s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic' for CMake config files
+[2.152s] Level 1:colcon.colcon_core.shell:create_environment_hook('s3_basic', 'cmake_prefix_path')
+[2.153s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.ps1'
+[2.154s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.dsv'
+[2.155s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/hook/cmake_prefix_path.sh'
+[2.157s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib'
+[2.157s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/bin'
+[2.157s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib/pkgconfig/s3_basic.pc'
+[2.158s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/lib/python3.10/site-packages'
+[2.158s] Level 1:colcon.colcon_core.environment:checking '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/bin'
+[2.159s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.ps1'
+[2.163s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.dsv'
+[2.169s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.sh'
+[2.171s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.bash'
+[2.173s] INFO:colcon.colcon_core.shell:Creating package script '/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/s3_basic/package.zsh'
+[2.174s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/aa274/autonomy_ws/src/AA174aSection/install/s3_basic/share/colcon-core/packages/s3_basic)
+[2.175s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[2.175s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[2.176s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[2.176s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[2.198s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[2.198s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[2.198s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[2.249s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[2.250s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/aa274/autonomy_ws/src/AA174aSection/install/local_setup.ps1'
+[2.254s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/aa274/autonomy_ws/src/AA174aSection/install/_local_setup_util_ps1.py'
+[2.259s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/aa274/autonomy_ws/src/AA174aSection/install/setup.ps1'
+[2.271s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/aa274/autonomy_ws/src/AA174aSection/install/local_setup.sh'
+[2.274s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/aa274/autonomy_ws/src/AA174aSection/install/_local_setup_util_sh.py'
+[2.276s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/aa274/autonomy_ws/src/AA174aSection/install/setup.sh'
+[2.284s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/aa274/autonomy_ws/src/AA174aSection/install/local_setup.bash'
+[2.288s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/aa274/autonomy_ws/src/AA174aSection/install/setup.bash'
+[2.296s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/aa274/autonomy_ws/src/AA174aSection/install/local_setup.zsh'
+[2.300s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/aa274/autonomy_ws/src/AA174aSection/install/setup.zsh'
