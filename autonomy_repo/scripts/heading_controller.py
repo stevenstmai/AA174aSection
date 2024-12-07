@@ -15,7 +15,7 @@ class HeadingController(BaseHeadingController):
         heading_error = goal_state.theta - current_state.theta
         heading_error = wrap_angle(heading_error)
 
-        control = self.get_parameter("kp").value * heading_errorfrom asl_tb3_msgs.msg import TurtleBotControl
+        control = self.get_parameter("kp").value * heading_error
 
         msg = TurtleBotControl()
         msg.omega = control
@@ -25,6 +25,6 @@ class HeadingController(BaseHeadingController):
 if __name__ == "__main__":
     rclpy.init()
     controller = HeadingController()
-    rclpy.spin(controller)from asl_tb3_msgs.msg import TurtleBotControl
+    rclpy.spin(controller)
     rclpy.shutdown()
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import typing as T
 import matplotlib.pyplot as plt
@@ -6,37 +8,35 @@ from scipy.signal import convolve2d
 from asl_tb3_lib.grids import StochOccupancyGrid2D
 from asl_tb3_msgs.msg import TurtleBotControl, TurtleBotState
 import rclpy
+from rclpy.node import Node
 
-from asl_tb3_lib.navigation import BaseNavigator, TrajectoryPlan
+from asl_tb3_lib.navigation import BaseNavigator, BaseController, TrajectoryPlan
 
 from std_msgs.msg import Bool #, OccupancyGrid
 from nav_msgs.msg import Path, OccupancyGrid
     
 
-class exploration_controller():
-    def __init__(self, speed: float, exploration: float) -> None:
-        super().__init__()
+class exploration_controller(Node):
+    def __init__(self) -> None:
+        super().__init__("exploration_controller")
 
         self.map_sub = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
-        self.state_sub = self.create_subscription(TurtleBotState, '/map', self.state_callback, 10)
+        self.state_sub = self.create_subscription(TurtleBotState, '/state', self.state_callback, 10)
         self.nav_success_sub = self.create_subscription(Bool, '/nav_success', self.nav_success_callback, 10)
         self.cmd_nav= self.create_publisher(TurtleBotState, "/cmd_nav", 10)
 
         # Internal state
-        self.occupancy = None
+        self.occupancy: T.Optional[StochOccupancyGrid2D] = None
         self.current_position = None
-        self.current_state = None
+        self.current_state: T.Optional[TurtleBotState] = None
         self.navigation_finished  = True
         self.goal_state = None
+        self.init = True
 
         self.detect_pub = self.create_subscription(Bool, "/detector_bool", self.detect_callback, 10)
         self.declare_parameter("active", True)
         self.startTime = None
-        self.detect_timer = self.create_timer(0.2, self.decector_timer)
-
-        if self.navigation_finished and self.goal_state is None:
-            self.get_logger().info("Setting initial exploration goal...")
-            self.find_next_goal()  
+        self.detect_timer = self.create_timer(0.2, self.detector_timer)
 
     @property
     def active(self):
@@ -70,7 +70,8 @@ class exploration_controller():
 
         Args:
             msg (OccupancyGrid): updated map message
-        """
+        """ 
+            
         self.occupancy = StochOccupancyGrid2D(
             resolution = msg.info.resolution,
             size_xy = np.array([msg.info.width, msg.info.height]),
@@ -78,7 +79,7 @@ class exploration_controller():
             window_size =9,
             probs = msg.data,
         )
-
+        
         # # replan if the new map updates causes collision in the original plan
         # if self.is_planned and not all([self.occupancy.is_free(s) for s in self.plan.path[1:]]):
         #     self.is_planned = False
@@ -88,6 +89,15 @@ class exploration_controller():
     def state_callback(self, msg: TurtleBotState):
         self.current_position = np.array([msg.x, msg.y])
         self.current_state = msg
+
+        if (self.init == True):
+            if (self.occupancy != None and self.current_state != None):
+                    self.get_logger().info("Setting initial exploration goal...")
+                    self.get_logger().info("%f", self.current_position[0])
+                    self.get_logger().info("%f", self.current_position[1])
+                    self.get_logger().info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                    self.find_next_goal() 
+                    self.init = False
 
     # Update navigation status based on success/failure
     def nav_success_callback(self, msg: Bool):
@@ -110,8 +120,8 @@ class exploration_controller():
             #Add heurisitcs with number on large group of unexplored
 
             goal_msg = TurtleBotState (
-                    x = closest_frontier[0]
-                    y = closest_frontier[1]
+                    x = closest_frontier[0],
+                    y = closest_frontier[1],
                     theta = angle
                 )
             
@@ -122,7 +132,7 @@ class exploration_controller():
 
     # TurtleBotState vs np.ndarray
     def explore(occupancy: StochOccupancyGrid2D, current_state: np.ndarray) -> np.ndarray:
-        """ returns potential states to explore
+        """ returns potential states to#!/usr/bin/env python3 explore
         Args:
             occupancy (StochasticOccupancyGrid2D): Represents the known, unknown, occupied, and unoccupied states. See class in first section of notebook.
 
